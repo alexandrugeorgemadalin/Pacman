@@ -34,55 +34,72 @@ class Environment:
                     screen.blit(pygame.image.load('./images/' + image), (x * BLOCK_SIZE, y * BLOCK_SIZE))
 
 
+rewards = {
+    '*': 10,
+    '.': 1
+}
+
+
+def show_score(x, y, pacman_score):
+    score = scoreFont.render("Score: " + str(pacman_score), True, (255, 255, 255))
+    screen.blit(score, (x, y))
+
+
 class Pacman:
     def __init__(self, x, y):
         self.x = x * BLOCK_SIZE
         self.y = y * BLOCK_SIZE
         self.image = pygame.image.load('./images/pacman_o.png')
+        self.score = 0
 
     def detect_collision(self, x, y, environment):
         # detect collision with walls
         if environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)] == '=':
             return True
+        elif environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)] in rewards:
+            self.score += rewards[environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)]]
+            environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)] = ' '
+            return False
         else:
             return False
 
     def draw_pacman(self, screen):
         screen.blit(self.image, (self.y, self.x))
 
-    def move_right(self, y, environment):
-        new_Y = self.y + y
+    def move_right(self, dy, environment):
+        new_Y = self.y + dy
         if int(new_Y / BLOCK_SIZE) > environment.width:
             pass
         elif not self.detect_collision(self.x, new_Y, environment):
-            self.y += y
+            self.y += dy
 
-    def move_left(self, y):
-        new_Y = self.y - y
+    def move_left(self, dy):
+        new_Y = self.y - dy
         if int(new_Y / BLOCK_SIZE) < 0:
             pass
         elif not self.detect_collision(self.x, new_Y, environment):
-            self.y -= y
+            self.y -= dy
 
-    def move_down(self, x):
-        new_X = self.x + x
+    def move_down(self, dx):
+        new_X = self.x + dx
         if int(new_X / BLOCK_SIZE) > environment.heigth:
             pass
         elif not self.detect_collision(new_X, self.y, environment):
-            self.x += x
+            self.x += dx
 
-    def move_up(self, x):
-        new_X = self.x - x
+    def move_up(self, dx):
+        new_X = self.x - dx
         if int(new_X / BLOCK_SIZE) < 0:
             pass
         elif not self.detect_collision(new_X, self.y, environment):
-            self.x -= x
+            self.x -= dx
 
 
 def update_screen(screen):
     screen.fill((0, 0, 0))
     environment.draw_map(screen)
     pacman.draw_pacman(screen)
+    show_score(scoreX, scoreY, pacman.score)
 
 
 if __name__ == '__main__':
@@ -91,7 +108,7 @@ if __name__ == '__main__':
     # Load the environment level
     environment.load_level()
 
-    pacman = Pacman(1, 2)
+    pacman = Pacman(1, 1)
 
     # Initialize the game
     pygame.init()
@@ -102,6 +119,10 @@ if __name__ == '__main__':
     # Draw the maze
     environment.draw_map(screen)
     pacman.draw_pacman(screen)
+
+    scoreFont = pygame.font.Font('freesansbold.ttf', 23)
+    scoreX = 6
+    scoreY = 6
 
     running = True
     while running:
