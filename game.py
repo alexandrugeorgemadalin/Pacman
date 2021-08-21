@@ -26,7 +26,7 @@ def update_screen(screen):
 
 if __name__ == '__main__':
     # Create the environment
-    environment = Environment(1)
+    environment = Environment(2)
     # Load the environment level
     environment.load_level()
 
