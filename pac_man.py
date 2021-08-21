@@ -1,4 +1,5 @@
 import pygame
+import random
 
 TITLE = 'Pac-Man'
 BLOCK_SIZE = 32
@@ -46,11 +47,22 @@ def show_score(x, y, pacman_score):
 
 
 class Pacman:
-    def __init__(self, x, y):
+    state_to_image = {
+        'up': './images/pacman_up.png',
+        'down': './images/pacman_down.png',
+        'right': './images/pacman_right.png',
+        'left': './images/pacman_left.png'
+    }
+
+    def __init__(self, x, y, state):
         self.x = x * BLOCK_SIZE
         self.y = y * BLOCK_SIZE
-        self.image = pygame.image.load('./images/pacman_o.png')
+        self.update_image_state(state)
+        # self.image = pygame.image.load(self.state_to_image[state])
         self.score = 0
+
+    def update_image_state(self, state):
+        self.image = pygame.image.load(self.state_to_image[state])
 
     def detect_collision(self, x, y, environment):
         # detect collision with walls
@@ -71,6 +83,7 @@ class Pacman:
         if int(new_Y / BLOCK_SIZE) > environment.width:
             pass
         elif not self.detect_collision(self.x, new_Y, environment):
+            self.update_image_state('right')
             self.y += dy
 
     def move_left(self, dy):
@@ -78,6 +91,7 @@ class Pacman:
         if int(new_Y / BLOCK_SIZE) < 0:
             pass
         elif not self.detect_collision(self.x, new_Y, environment):
+            self.update_image_state('left')
             self.y -= dy
 
     def move_down(self, dx):
@@ -85,6 +99,7 @@ class Pacman:
         if int(new_X / BLOCK_SIZE) > environment.heigth:
             pass
         elif not self.detect_collision(new_X, self.y, environment):
+            self.update_image_state('down')
             self.x += dx
 
     def move_up(self, dx):
@@ -92,6 +107,7 @@ class Pacman:
         if int(new_X / BLOCK_SIZE) < 0:
             pass
         elif not self.detect_collision(new_X, self.y, environment):
+            self.update_image_state('up')
             self.x -= dx
 
 
@@ -108,7 +124,7 @@ if __name__ == '__main__':
     # Load the environment level
     environment.load_level()
 
-    pacman = Pacman(1, 1)
+    pacman = Pacman(1, 1, 'right')
 
     # Initialize the game
     pygame.init()
