@@ -2,6 +2,7 @@ import pygame
 import random
 from environment import Environment
 from pacman import Pacman
+from menu import Menu
 
 TITLE = 'Pac-Man'
 BLOCK_SIZE = 32
@@ -32,6 +33,17 @@ if __name__ == '__main__':
 
     pacman = Pacman(1, 1, 'right')
 
+    # -----------------------------------------------
+    # --------Selecting the game mode----------------
+    running = False
+
+    menu = Menu(520, 520)
+    game_mode = menu.create_menu()
+    if game_mode == 'MANUAL':
+        running = True
+
+    # -----------------------------------------------
+
     # Initialize the game
     pygame.init()
 
@@ -39,6 +51,7 @@ if __name__ == '__main__':
     screen = pygame.display.set_mode((environment.width * BLOCK_SIZE, environment.heigth * BLOCK_SIZE))
 
     # Draw the maze
+
     environment.draw_map(screen)
     pacman.draw_pacman(screen)
 
@@ -46,7 +59,6 @@ if __name__ == '__main__':
     scoreX = 6
     scoreY = 6
 
-    running = True
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
