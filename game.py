@@ -96,6 +96,11 @@ if __name__ == '__main__':
                         pacman.move_down(BLOCK_SIZE, environment, rewards)
             update_screen(screen)
             pygame.display.update()
+            if environment.food_count == 0:
+                running = False
+                pygame.time.wait(750)
+
+        end_window()
 
     elif game_mode == 'AUTO':
         # define training parameters

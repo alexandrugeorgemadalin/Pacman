@@ -26,6 +26,7 @@ class Pacman:
             return True
         elif environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)] in rewards:
             self.score += rewards[environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)]]
+            environment.food_count -= 1
             environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)] = ' '
             return False
         else:

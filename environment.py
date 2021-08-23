@@ -16,10 +16,13 @@ class Environment:
 
     def load_level(self):
         file = "level-%s.txt" % self.level_no
+        self.food_count = 0
         with open(file) as f:
             for line in f:
                 row = []
                 for block in line.strip():
+                    if block == '.' or block == '*':
+                        self.food_count += 1
                     row.append(block)
                 self.world.append(row)
         self.width = len(self.world[0])
