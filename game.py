@@ -13,6 +13,11 @@ rewards = {
     '.': 1
 }
 
+endPositions = {
+    1: (6, 18),
+    2: (14, 21)
+}
+
 
 def show_score(x, y, pacman_score):
     score = scoreFont.render("Score: " + str(pacman_score), True, (255, 255, 255))
@@ -27,18 +32,19 @@ def update_screen(screen):
 
 
 if __name__ == '__main__':
-    # Create the environment
-    environment = Environment(2)
-    # Load the environment level
-    environment.load_level()
-
-    pacman = Pacman(1, 1, 'right')
 
     # --------Selecting the game mode----------------
     running = False
 
     menu = Menu(520, 520)
-    game_mode = menu.create_menu()
+    game_mode, level_no = menu.create_menu()
+
+    # Create the environment
+    environment = Environment(level_no)
+    # Load the environment level
+    environment.load_level()
+
+    pacman = Pacman(1, 1, 'right')
 
     # Initialize the game
     pygame.init()
@@ -81,7 +87,7 @@ if __name__ == '__main__':
         learning_rate = 0.9  # the rate at which the AI agent should learn
 
         agent = PacmanAgent(environment.heigth, environment.width, environment)
-        endX, endY = 14, 21
+        endX, endY = endPositions[level_no]
         agent.set_rewards(endX, endY)
         agent.train_agent(epsilon, discount_factor, learning_rate, 10000)
         shortest_path = agent.get_shortest_path(int(pacman.x / BLOCK_SIZE), int(pacman.y / BLOCK_SIZE))
