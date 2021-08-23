@@ -16,7 +16,7 @@ rewards = {
 endPositions = {
     1: (6, 18),
     2: (14, 21),
-    3: (19, 26)
+    3: (21, 11)
 }
 
 
@@ -30,6 +30,22 @@ def update_screen(screen):
     environment.draw_map(screen)
     pacman.draw_pacman(screen)
     show_score(scoreX, scoreY, pacman.score)
+
+
+def end_window():
+    running = True
+    end_screen = pygame.display.set_mode((400, 150))
+    messageFont = pygame.font.Font('freesansbold.ttf', 30)
+    messageX = 100
+    messageY = 50
+    message = messageFont.render('End Game!', True, (255, 255, 255))
+    while running:
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                running = False
+        end_screen.fill((0, 0, 0))
+        end_screen.blit(message, (messageX, messageY))
+        pygame.display.update()
 
 
 if __name__ == '__main__':
@@ -127,3 +143,5 @@ if __name__ == '__main__':
             # set the finish block to a different wall color
             screen.blit(pygame.image.load('./images/end_wall.png'), (endY * BLOCK_SIZE, endX * BLOCK_SIZE))
             pygame.display.update()
+
+        end_window()
