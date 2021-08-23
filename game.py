@@ -15,7 +15,8 @@ rewards = {
 
 endPositions = {
     1: (6, 18),
-    2: (14, 21)
+    2: (14, 21),
+    3: (19, 26)
 }
 
 
@@ -89,7 +90,7 @@ if __name__ == '__main__':
         agent = PacmanAgent(environment.heigth, environment.width, environment)
         endX, endY = endPositions[level_no]
         agent.set_rewards(endX, endY)
-        agent.train_agent(epsilon, discount_factor, learning_rate, 10000)
+        agent.train_agent(epsilon, discount_factor, learning_rate, 1000)
         shortest_path = agent.get_shortest_path(int(pacman.x / BLOCK_SIZE), int(pacman.y / BLOCK_SIZE))
         moves = agent.path_to_moves(shortest_path)
 

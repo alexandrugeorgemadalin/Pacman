@@ -149,4 +149,3 @@ class Menu:
         for box in boxes:
             if box.checked:
                 return mode, box.idnum
-        # return mode
