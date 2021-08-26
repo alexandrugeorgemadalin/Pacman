@@ -34,19 +34,21 @@ def update_screen(screen):
 
 def end_window():
     running = True
-    end_screen = pygame.display.set_mode((400, 150))
+    end_screen = pygame.display.set_mode((450, 200))
     messageFont = pygame.font.Font('freesansbold.ttf', 30)
     messageX = 100
     messageY = 50
-    message = messageFont.render('End Game!', True, (255, 255, 255))
+    message = messageFont.render('Congratulations!', True, (240,255,255))
+    message2Font = pygame.font.Font('freesansbold.ttf', 20)
+    message2 = message2Font.render('Final score: ' + str(pacman.score), True, (40,40,40))
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 running = False
-        end_screen.fill((0, 0, 0))
+        end_screen.fill((95, 158, 160))
         end_screen.blit(message, (messageX, messageY))
+        end_screen.blit(message2, (messageX + 45, messageY + 80))
         pygame.display.update()
-
 
 if __name__ == '__main__':
 
