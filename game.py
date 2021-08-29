@@ -28,6 +28,8 @@ def show_score(x, y, pacman_score):
 def update_screen(screen):
     screen.fill((0, 0, 0))
     environment.draw_map(screen)
+    for ghost in environment.ghosts:
+        ghost.draw_ghost(screen)
     pacman.draw_pacman(screen)
     show_score(scoreX, scoreY, pacman.score)
 
@@ -38,9 +40,9 @@ def end_window():
     messageFont = pygame.font.Font('freesansbold.ttf', 30)
     messageX = 100
     messageY = 50
-    message = messageFont.render('Congratulations!', True, (240,255,255))
+    message = messageFont.render('Congratulations!', True, (240, 255, 255))
     message2Font = pygame.font.Font('freesansbold.ttf', 20)
-    message2 = message2Font.render('Final score: ' + str(pacman.score), True, (40,40,40))
+    message2 = message2Font.render('Final score: ' + str(pacman.score), True, (40, 40, 40))
     while running:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -49,6 +51,7 @@ def end_window():
         end_screen.blit(message, (messageX, messageY))
         end_screen.blit(message2, (messageX + 45, messageY + 80))
         pygame.display.update()
+
 
 if __name__ == '__main__':
 
@@ -63,7 +66,7 @@ if __name__ == '__main__':
     # Load the environment level
     environment.load_level()
 
-    pacman = Pacman(1, 1, 'right')
+    pacman = Pacman(1, 2, 'right')
 
     # Initialize the game
     pygame.init()
@@ -77,12 +80,15 @@ if __name__ == '__main__':
 
         environment.draw_map(screen)
         pacman.draw_pacman(screen)
+        for ghost in environment.ghosts:
+            ghost.draw_ghost(screen)
 
         running = True
         scoreFont = pygame.font.Font('freesansbold.ttf', 23)
         scoreX = 6
         scoreY = 6
-
+        GHOSTMOVE, t= pygame.USEREVENT + 1, 300
+        pygame.time.set_timer(GHOSTMOVE, t)
         while running:
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
@@ -96,6 +102,9 @@ if __name__ == '__main__':
                         pacman.move_up(BLOCK_SIZE, environment, rewards)
                     if event.key == pygame.K_DOWN:
                         pacman.move_down(BLOCK_SIZE, environment, rewards)
+                if event.type == GHOSTMOVE:
+                    for ghost in environment.ghosts:
+                        ghost.move_ghost(environment)
             update_screen(screen)
             pygame.display.update()
             if environment.food_count == 0:
