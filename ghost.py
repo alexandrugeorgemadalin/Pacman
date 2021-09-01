@@ -9,7 +9,8 @@ directions = ['left', 'right', 'up', 'down']
 class Ghost:
     ghosts_types = {
         'g': './images/ghost1.png',
-        'G': './images/ghost2.png'
+        'G': './images/ghost2.png',
+        'E': './images/ghost_white.png'
     }
 
     def __init__(self, x, y, type):
@@ -18,9 +19,12 @@ class Ghost:
         self.type = type
         self.image = pygame.image.load(self.ghosts_types.get(self.type, None))
         self.direction = None
+        self.eatable = False
 
     # x, y inversed
     def draw_ghost(self, screen):
+        if self.eatable:
+            self.image = pygame.image.load(self.ghosts_types.get('E', None))
         screen.blit(self.image, (self.y, self.x))
 
     def detect_wall_collision(self, x, y, environment):

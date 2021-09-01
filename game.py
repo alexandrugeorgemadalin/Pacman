@@ -34,13 +34,12 @@ def update_screen(screen):
     show_score(scoreX, scoreY, pacman.score)
 
 
-def end_window():
+def end_window(end_message):
+    width, height = 450, 200
     running = True
     end_screen = pygame.display.set_mode((450, 200))
     messageFont = pygame.font.Font('freesansbold.ttf', 30)
-    messageX = 100
-    messageY = 50
-    message = messageFont.render('Congratulations!', True, (240, 255, 255))
+    message = messageFont.render(end_message, True, (240, 255, 255))
     message2Font = pygame.font.Font('freesansbold.ttf', 20)
     message2 = message2Font.render('Final score: ' + str(pacman.score), True, (40, 40, 40))
     while running:
@@ -48,9 +47,16 @@ def end_window():
             if event.type == pygame.QUIT:
                 running = False
         end_screen.fill((95, 158, 160))
-        end_screen.blit(message, (messageX, messageY))
-        end_screen.blit(message2, (messageX + 45, messageY + 80))
+        end_screen.blit(message, message.get_rect(center=(width / 2, height / 2)))
+        end_screen.blit(message2, message2.get_rect(center=(width / 2, (height / 2) + 50)))
         pygame.display.update()
+
+
+def game_over(pacman, ghosts):
+    for ghost in ghosts:
+        if ghost.eatable is False and pacman.x == ghost.x and pacman.y == ghost.y:
+            return True
+    return False
 
 
 if __name__ == '__main__':
@@ -66,7 +72,7 @@ if __name__ == '__main__':
     # Load the environment level
     environment.load_level()
 
-    pacman = Pacman(1, 2, 'right')
+    pacman = Pacman(1, 1, 'right')
 
     # Initialize the game
     pygame.init()
@@ -87,7 +93,7 @@ if __name__ == '__main__':
         scoreFont = pygame.font.Font('freesansbold.ttf', 23)
         scoreX = 6
         scoreY = 6
-        GHOSTMOVE, t= pygame.USEREVENT + 1, 300
+        GHOSTMOVE, t = pygame.USEREVENT + 1, 275
         pygame.time.set_timer(GHOSTMOVE, t)
         while running:
             for event in pygame.event.get():
@@ -110,8 +116,13 @@ if __name__ == '__main__':
             if environment.food_count == 0:
                 running = False
                 pygame.time.wait(750)
+                end_window("Congratulations!")
+            elif game_over(pacman, environment.ghosts):
+                running = False
+                pygame.time.wait(750)
+                end_window("Game Over!")
 
-        end_window()
+        # end_window()
 
     elif game_mode == 'AUTO':
         # define training parameters
@@ -140,10 +151,15 @@ if __name__ == '__main__':
         scoreX = 6
         scoreY = 6
         move_index = 0
+        GHOSTMOVE, t = pygame.USEREVENT + 1, 500
+        pygame.time.set_timer(GHOSTMOVE, t)
         while running and move_index < len(moves):
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                if event.type == GHOSTMOVE:
+                    for ghost in environment.ghosts:
+                        ghost.move_ghost(environment)
 
             if moves[move_index] == 'up':
                 pacman.move_up(BLOCK_SIZE, environment, rewards)
@@ -160,4 +176,4 @@ if __name__ == '__main__':
             screen.blit(pygame.image.load('./images/end_wall.png'), (endY * BLOCK_SIZE, endX * BLOCK_SIZE))
             pygame.display.update()
 
-        end_window()
+        end_window("Congratulations!")
