@@ -15,6 +15,7 @@ class Environment:
     def __init__(self, level_no, ):
         self.level_no = level_no
 
+    # function that load the map from the level.txt file
     def load_level(self):
         file = "level-%s.txt" % self.level_no
         self.food_count = 0
@@ -37,6 +38,7 @@ class Environment:
         self.width = len(self.world[0])
         self.heigth = len(self.world)
 
+    # function that draw the map on the game screen
     def draw_map(self, screen):
         for y, row in enumerate(self.world):
             for x, block in enumerate(row):

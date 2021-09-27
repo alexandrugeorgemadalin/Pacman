@@ -1,6 +1,20 @@
 import numpy as np
 
 
+def path_to_moves(shortest_path):
+    moves = []
+    for i in range(1, len(shortest_path)):
+        if shortest_path[i - 1][1] == shortest_path[i][1] and shortest_path[i - 1][0] - shortest_path[i][0] == 1:
+            moves.append('up')
+        elif shortest_path[i - 1][1] == shortest_path[i][1] and shortest_path[i - 1][0] - shortest_path[i][0] == -1:
+            moves.append('down')
+        elif shortest_path[i - 1][0] == shortest_path[i][0] and shortest_path[i - 1][1] - shortest_path[i][1] == 1:
+            moves.append('left')
+        elif shortest_path[i - 1][0] == shortest_path[i][0] and shortest_path[i - 1][1] - shortest_path[i][1] == -1:
+            moves.append('right')
+    return moves
+
+
 class PacmanAgent:
     # define actions
     # numeric action codes: 0 = up, 1 = right, 2 = down, 3 = left
@@ -18,7 +32,7 @@ class PacmanAgent:
         self.q_values = np.zeros((self.rows, self.columns, 4))
         self.rewards = None
 
-    def set_rewards(self, endX, endY):
+    def set_rewards(self, endx, endy):
         # define the map, set the path where the pacman can walk with -1
         # and the walls with -100
         self.rewards = np.full((self.rows, self.columns), 0)
@@ -28,7 +42,7 @@ class PacmanAgent:
                     self.rewards[x][y] = -100
                 elif block == ' ' or block == '.' or block == '*':
                     self.rewards[x][y] = -1
-        self.rewards[endX][endY] = 100
+        self.rewards[endx][endy] = 100
 
     # define a function that determines if the specified location is a terminal state
     def is_terminal_state(self, current_row_index, current_column_index):
@@ -80,8 +94,7 @@ class PacmanAgent:
             return []
         else:  # if this is a 'legal' starting location
             current_row_index, current_column_index = start_row_index, start_column_index
-            shortest_path = []
-            shortest_path.append([current_row_index, current_column_index])
+            shortest_path = [[current_row_index, current_column_index]]
             # continue moving along the path until we reach the goal
             while not self.is_terminal_state(current_row_index, current_column_index):
                 # get the best action to take
@@ -123,16 +136,3 @@ class PacmanAgent:
                 self.q_values[old_row_index, old_column_index, action_index] = new_q_value
 
         print('Training complete!')
-
-    def path_to_moves(self, shortest_path):
-        moves = []
-        for i in range(1, len(shortest_path)):
-            if shortest_path[i - 1][1] == shortest_path[i][1] and shortest_path[i - 1][0] - shortest_path[i][0] == 1:
-                moves.append('up')
-            elif shortest_path[i - 1][1] == shortest_path[i][1] and shortest_path[i - 1][0] - shortest_path[i][0] == -1:
-                moves.append('down')
-            elif shortest_path[i - 1][0] == shortest_path[i][0] and shortest_path[i - 1][1] - shortest_path[i][1] == 1:
-                moves.append('left')
-            elif shortest_path[i - 1][0] == shortest_path[i][0] and shortest_path[i - 1][1] - shortest_path[i][1] == -1:
-                moves.append('right')
-        return moves

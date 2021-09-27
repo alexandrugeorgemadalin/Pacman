@@ -16,6 +16,10 @@ class Checkbox:
         self.fc = font_color
         self.to = text_offset
         self.ft = font
+        self.font = None
+        self.font_surf = None
+        self.font_pos = None
+        self.click = None
 
         # identification for removal and reorginazation
         self.idnum = idnum
@@ -45,7 +49,7 @@ class Checkbox:
             pygame.draw.rect(self.surface, self.oc, self.checkbox_outline, 1)
         self.draw_button_text()
 
-    def _update(self, event_object):
+    def _update(self):
         x, y = pygame.mouse.get_pos()
         px, py, w, h = self.checkbox_obj
         if px < x < px + w and py < y < py + w:
@@ -57,7 +61,7 @@ class Checkbox:
     def update_checkbox(self, event_object):
         if event_object.type == pygame.MOUSEBUTTONDOWN:
             self.click = True
-            self._update(event_object)
+            self._update()
 
 
 class Menu:

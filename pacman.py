@@ -18,6 +18,7 @@ class Pacman:
         self.score = 0
         self.radius = 5 * BLOCK_SIZE
 
+    # function that updates the pacman orientation in the game
     def update_image_state(self, state):
         self.image = pygame.image.load(self.state_to_image[state])
 
@@ -27,12 +28,14 @@ class Pacman:
             return True
         return False
 
+    # function that check if there is a eatable ghosts
     def check_ghosts(self, environment):
         for ghost in environment.ghosts:
             if ghost.eatable is True and self.x == ghost.x and self.y == ghost.y:
                 self.score += 20
                 environment.ghosts.remove(ghost)
 
+    # function that detect collision with walls and points on the map
     def detect_collision(self, x, y, environment, rewards):
         # detect collision with walls
         if environment.world[int(x / BLOCK_SIZE)][int(y / BLOCK_SIZE)] == '=':
@@ -49,9 +52,11 @@ class Pacman:
         else:
             return False
 
+    # x, y inversed because of the pygame grid
     def draw_pacman(self, screen):
         screen.blit(self.image, (self.y, self.x))
 
+    # function that moves the pacman right with dy
     def move_right(self, dy, environment, rewards):
         new_Y = self.y + dy
         if int(new_Y / BLOCK_SIZE) > environment.width:
@@ -61,6 +66,7 @@ class Pacman:
             self.y += dy
             self.check_ghosts(environment)
 
+    # function that moves the pacman left with dy
     def move_left(self, dy, environment, rewards):
         new_Y = self.y - dy
         if int(new_Y / BLOCK_SIZE) < 0:
@@ -70,6 +76,7 @@ class Pacman:
             self.y -= dy
             self.check_ghosts(environment)
 
+    # function that moves the pacman down with dx
     def move_down(self, dx, environment, rewards):
         new_X = self.x + dx
         if int(new_X / BLOCK_SIZE) > environment.heigth:
@@ -79,6 +86,7 @@ class Pacman:
             self.x += dx
             self.check_ghosts(environment)
 
+    # function that moves the pacman up with dx
     def move_up(self, dx, environment, rewards):
         new_X = self.x - dx
         if int(new_X / BLOCK_SIZE) < 0:

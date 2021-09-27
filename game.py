@@ -1,18 +1,18 @@
 import pygame
-import random
 from environment import Environment
 from pacman import Pacman
 from menu import Menu
-from agent import PacmanAgent
+from agent import PacmanAgent, path_to_moves
 
-TITLE = 'Pac-Man'
 BLOCK_SIZE = 32
 
+# rewards for eating a point or a ball
 rewards = {
     '*': 10,
     '.': 1
 }
 
+# end positions for each level when the 'AUTO' game mode is selected
 endPositions = {
     1: (6, 18),
     2: (14, 21),
@@ -20,11 +20,13 @@ endPositions = {
 }
 
 
+# function that shows the score on the screen
 def show_score(x, y, pacman_score):
     score = scoreFont.render("Score: " + str(pacman_score), True, (255, 255, 255))
     screen.blit(score, (x, y))
 
 
+# function that updates the screen
 def update_screen(screen):
     screen.fill((0, 0, 0))
     environment.draw_map(screen)
@@ -34,6 +36,8 @@ def update_screen(screen):
     show_score(scoreX, scoreY, pacman.score)
 
 
+# function that creates the final screen at the end of the game
+# displays a 'congratulations' or 'game over' message with the final score
 def end_window(end_message):
     width, height = 450, 200
     running = True
@@ -52,6 +56,7 @@ def end_window(end_message):
         pygame.display.update()
 
 
+# function that checks if the pacman is killed by a ghost
 def game_over(pacman, ghosts):
     for ghost in ghosts:
         if ghost.eatable is False and pacman.x == ghost.x and pacman.y == ghost.y:
@@ -61,9 +66,7 @@ def game_over(pacman, ghosts):
 
 if __name__ == '__main__':
 
-    # --------Selecting the game mode----------------
-    running = False
-
+    # Selecting the game mode and level
     menu = Menu(520, 520)
     game_mode, level_no = menu.create_menu()
 
@@ -77,6 +80,8 @@ if __name__ == '__main__':
     # Initialize the game
     pygame.init()
 
+    # 'MANUAL' game mode
+    # the player control the pacman using arrows
     if game_mode == 'MANUAL':
 
         # Create the game screen
@@ -99,6 +104,7 @@ if __name__ == '__main__':
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                # check the pressed keys to move the pacman
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_RIGHT:
                         pacman.move_right(BLOCK_SIZE, environment, rewards)
@@ -108,11 +114,13 @@ if __name__ == '__main__':
                         pacman.move_up(BLOCK_SIZE, environment, rewards)
                     if event.key == pygame.K_DOWN:
                         pacman.move_down(BLOCK_SIZE, environment, rewards)
+                # after a period of t = 275 ms all ghosts move
                 if event.type == GHOSTMOVE:
                     for ghost in environment.ghosts:
                         ghost.move_ghost(environment)
             update_screen(screen)
             pygame.display.update()
+            # check the food count
             if environment.food_count == 0:
                 running = False
                 pygame.time.wait(750)
@@ -121,9 +129,9 @@ if __name__ == '__main__':
                 running = False
                 pygame.time.wait(750)
                 end_window("Game Over!")
-
-        # end_window()
-
+    # 'AUTO' game mode
+    # using a Q-learning algorithm the map is learned and is calculated the path to the end position
+    # using the values calculated in the Q_value matrix
     elif game_mode == 'AUTO':
         # define training parameters
         epsilon = 0.9  # the percentage of time when we should take the best action
@@ -135,7 +143,7 @@ if __name__ == '__main__':
         agent.set_rewards(endX, endY)
         agent.train_agent(epsilon, discount_factor, learning_rate, 1000)
         shortest_path = agent.get_shortest_path(int(pacman.x / BLOCK_SIZE), int(pacman.y / BLOCK_SIZE))
-        moves = agent.path_to_moves(shortest_path)
+        moves = path_to_moves(shortest_path)
 
         # Create the game screen
         screen = pygame.display.set_mode((environment.width * BLOCK_SIZE, environment.heigth * BLOCK_SIZE))
@@ -157,10 +165,11 @@ if __name__ == '__main__':
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                # after a period of t = 500 ms all ghosts move
                 if event.type == GHOSTMOVE:
                     for ghost in environment.ghosts:
                         ghost.move_ghost(environment)
-
+            # check what move is next
             if moves[move_index] == 'up':
                 pacman.move_up(BLOCK_SIZE, environment, rewards)
             elif moves[move_index] == 'down':
